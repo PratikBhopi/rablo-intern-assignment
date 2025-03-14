@@ -29,7 +29,7 @@ function Login() {
 
       const data = await response.json();
       console.log(data)
-      if (!response.success) throw new Error(data.message || "Invalid credentials");
+      if (!data.success) throw new Error(data.message || "Invalid credentials");
       console.log("Login Successful:", data);
       navigate('/dashboard');
       alert("Login Successful!");

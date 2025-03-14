@@ -10,9 +10,9 @@ const ProductPage = () => {
     const fetchProducts = async () => { 
       try {
         const response = await fetch(`${import.meta.env.VITE_API_URL}/product/all`, { credentials: "include" });
-        if (!response.success) throw new Error("Failed to fetch products");
+        if (!response.json().success) throw new Error("Failed to fetch products");
         const data = await response.json();
-        setProducts(data.products);
+        setProducts(data.products);s
       } catch (error) {
         console.error("Error fetching products:", error);
       }
