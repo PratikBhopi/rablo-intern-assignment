@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-
+import AddProduct from "./AddProduct";
 const ProductPage = () => {
   const [products, setProducts] = useState([]);
   const [editingProduct, setEditingProduct] = useState(null);
@@ -9,6 +9,7 @@ const ProductPage = () => {
   const [priceValue, setPriceValue] = useState('');
   const [ratingValue, setRatingValue] = useState('');
   const navigate = useNavigate();
+  const [openAddProduct,setOpenAddProduct] = useState(false);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -91,26 +92,12 @@ const ProductPage = () => {
   };
 
   const sortByRating = async () => {
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/product/sort/rating`, {
-        headers: {
-          "Authorization": `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-      const data = await response.json();
-      if (data.message == 'unauthorized' || response.status === 401) {
-        navigate('/');
-      }
-      if (!data.success) throw new Error("Failed to sort products by rating");
-      setProducts(data.products);
-    } catch (error) {
-      console.error("Error sorting products by rating:", error);
-    }
+    const sortedProducts = [...products].sort((a, b) => b.featured - a.featured);
+    setProducts(sortedProducts);
   };
 
   const sortByFeatures = () => {
-    const sortedProducts = [...products].sort((a, b) => b.featured - a.featured);
-    setProducts(sortedProducts);
+    setProducts(products.filter((product) => product.featured===true));
   };
 
   const handlePriceChange = async (e) => {
@@ -156,6 +143,7 @@ const ProductPage = () => {
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
       <h1 className="text-2xl font-semibold mb-4">Product List</h1>
+      <button onClick={()=>setOpenAddProduct(true)} className="px-4 py-2 mb-3 bg-blue-500 text-white rounded">➕ Add Product</button>
       <div className="flex justify-between mb-4">
         <div className="grid md:grid-cols-3 gap-6">
           {products.map((product) => (
@@ -195,6 +183,7 @@ const ProductPage = () => {
         </div>
       </div>
 
+      {/* updating form */}
       {editingProduct && (
         <div className="fixed inset-0 flex items-center justify-center bg-[#ffffff7e] backdrop-blur-[2px] bg-opacity-50">
           <div className="bg-white p-6 rounded-lg shadow-lg w-96">
@@ -270,6 +259,10 @@ const ProductPage = () => {
           </div>
           </div>
       )}
+      {openAddProduct && 
+      <div className="fixed inset-0 flex items-center justify-center bg-[#ffffff7e] backdrop-blur-[2px] bg-opacity-50">
+      <AddProduct setOpenAddProduct={setOpenAddProduct} openAddProduct={openAddProduct}/>
+      </div>}
     </div>
   );
 };

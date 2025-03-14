@@ -3,6 +3,7 @@ import Login from './pages/Login'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Register from './pages/Register'
 import Dashboard from './pages/Dashboard'
+import AddProduct from './pages/AddProduct'
 
 
 function App() {
