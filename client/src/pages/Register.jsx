@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import * as yup from "yup";
 
 function Register() {
@@ -11,7 +12,7 @@ function Register() {
   // Validation schema
   const emailSchema = yup.string().email("Invalid email format").required("Email is required");
   const passwordSchema = yup.string().min(6, "Password must be at least 6 characters long").required("Password is required");
-
+  const navigate=useNavigate();
   const handleRegister = async (e) => {
     e.preventDefault();
     setError("");
@@ -32,9 +33,8 @@ function Register() {
       });
 
       const data = await response.json();
-      if (!response.ok) throw new Error(data.message || "Registration failed");
-
-      console.log("Registration Successful:", data);
+      if (!data.success) throw new Error(data.message || "Registration failed");
+      navigate('/');
       alert("Registration Successful! Please login.");
     } catch (err) {
       setError(err.message);

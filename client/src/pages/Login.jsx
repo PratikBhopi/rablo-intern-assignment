@@ -31,6 +31,7 @@ function Login() {
       console.log(data)
       if (!data.success) throw new Error(data.message || "Invalid credentials");
       console.log("Login Successful:", data);
+      localStorage.setItem('token',data.token)
       navigate('/dashboard');
       alert("Login Successful!");
     } catch (err) {
