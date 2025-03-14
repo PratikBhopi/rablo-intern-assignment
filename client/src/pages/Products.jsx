@@ -6,6 +6,8 @@ const ProductPage = () => {
   const [editingProduct, setEditingProduct] = useState(null);
   const [updatedData, setUpdatedData] = useState({});
   const [confirmDelete, setConfirmDelete] = useState(null);
+  const [priceValue, setPriceValue] = useState('');
+  const [ratingValue, setRatingValue] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -17,7 +19,7 @@ const ProductPage = () => {
           }
         });
         const data = await response.json();
-        if (data.message === 'unauthorized') {
+        if (data.message == 'unauthorized' || response.status === 401) {
           navigate('/');
         }
         if (!data.success) throw new Error("Failed to fetch products");
@@ -52,7 +54,7 @@ const ProductPage = () => {
         body: JSON.stringify({ values: updatedData }),
       });
       const data = await response.json();
-      if (data.message === 'unauthorized') {
+      if (data.message == 'unauthorized' || response.status === 401) {
         navigate('/');
       }
       if (!data.success) throw new Error("Failed to update product");
@@ -77,7 +79,7 @@ const ProductPage = () => {
          },
       });
       const data = await response.json();
-      if (data.message === 'unauthorized') {
+      if (data.message == 'unauthorized' || response.status === 401) {
         navigate('/');
       }
       if (!response.ok) throw new Error("Failed to delete product");
@@ -96,7 +98,7 @@ const ProductPage = () => {
         }
       });
       const data = await response.json();
-      if (data.message === 'unauthorized') {
+      if (data.message == 'unauthorized' || response.status === 401) {
         navigate('/');
       }
       if (!data.success) throw new Error("Failed to sort products by rating");
@@ -106,22 +108,48 @@ const ProductPage = () => {
     }
   };
 
-  const sortByFeatures = async () => {
+  const sortByFeatures = () => {
+    const sortedProducts = [...products].sort((a, b) => b.featured - a.featured);
+    setProducts(sortedProducts);
+  };
+
+  const handlePriceChange = async (e) => {
+    const value = e.target.value;
+    setPriceValue(value);
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/product/sort/features`, {
-        credentials: "include",
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/product/price/${value}`, {
         headers: {
           "Authorization": `Bearer ${localStorage.getItem('token')}`
         }
       });
       const data = await response.json();
-      if (data.message === 'unauthorized') {
+      if (data.message == 'unauthorized' || response.status === 401) {
         navigate('/');
       }
-      if (!data.success) throw new Error("Failed to sort products by features");
+      if (!data.success) throw new Error("Failed to filter products by price");
       setProducts(data.products);
     } catch (error) {
-      console.error("Error sorting products by features:", error);
+      console.error("Error filtering products by price:", error);
+    }
+  };
+
+  const handleRatingChange = async (e) => {
+    const value = e.target.value;
+    setRatingValue(value);
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/product/rating/${value}`, {
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      const data = await response.json();
+      if (data.message == 'unauthorized' || response.status === 401) {
+        navigate('/');
+      }
+      if (!data.success) throw new Error("Failed to filter products by rating");
+      setProducts(data.products);
+    } catch (error) {
+      console.error("Error filtering products by rating:", error);
     }
   };
 
@@ -150,6 +178,20 @@ const ProductPage = () => {
         <div className="flex flex-col gap-4">
           <button onClick={sortByRating} className="px-4 py-2 bg-blue-500 text-white rounded">Sort by Rating</button>
           <button onClick={sortByFeatures} className="px-4 py-2 bg-green-500 text-white rounded">Sort by Features</button>
+          <input
+            type="number"
+            placeholder="Get Products Less by Price"
+            value={priceValue}
+            onChange={handlePriceChange}
+            className="px-4 py-2 border rounded"
+          />
+          <input
+            type="number"
+            placeholder="Get Products more by Rating"
+            value={ratingValue}
+            onChange={handleRatingChange}
+            className="px-4 py-2 border rounded"
+          />
         </div>
       </div>
 
@@ -200,7 +242,7 @@ const ProductPage = () => {
               Featured
             </label>
 
-            <div className="flex justify-end">
+            <div className="flex justify-end"></div>
               <button onClick={() => setEditingProduct(null)} className="mr-2 px-4 py-2 bg-gray-300 rounded">
                 Cancel
               </button>
@@ -209,12 +251,11 @@ const ProductPage = () => {
               </button>
             </div>
           </div>
-        </div>
       )}
 
       {/* Delete Confirmation Modal */}
       {confirmDelete && (
-        <div className="fixed inset-0 flex items-center justify-center bg-[#ffffff69] backdrop-blur-md bg-opacity-50">
+        <div div className="fixed inset-0 flex items-center justify-center bg-[#ffffff69] backdrop-blur-md bg-opacity-50">
           <div className="bg-white p-6 rounded-lg shadow-lg">
             <h2 className="text-xl font-semibold mb-4">Confirm Deletion</h2>
             <p>Are you sure you want to delete this product?</p>
@@ -227,7 +268,7 @@ const ProductPage = () => {
               </button>
             </div>
           </div>
-        </div>
+          </div>
       )}
     </div>
   );
