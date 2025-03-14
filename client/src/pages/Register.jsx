@@ -34,8 +34,10 @@ function Register() {
 
       const data = await response.json();
       if (!data.success) throw new Error(data.message || "Registration failed");
+      if(response.status===201){ 
       navigate('/');
       alert("Registration Successful! Please login.");
+      }
     } catch (err) {
       setError(err.message);
     }

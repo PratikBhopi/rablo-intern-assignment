@@ -12,7 +12,6 @@ const ProductPage = () => {
     const fetchProducts = async () => {
       try {
         const response = await fetch(`${import.meta.env.VITE_API_URL}/product/all`, {
-          credentials: "include",
           headers: {
             "Authorization": `Bearer ${localStorage.getItem('token')}`
           }
@@ -50,7 +49,6 @@ const ProductPage = () => {
         headers: { "Content-Type": "application/json",
           "Authorization": `Bearer ${localStorage.getItem("token")}`
          },
-        credentials: "include",
         body: JSON.stringify({ values: updatedData }),
       });
       const data = await response.json();
@@ -74,7 +72,6 @@ const ProductPage = () => {
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/product/delete-product/${confirmDelete}`, {
         method: "DELETE",
-        credentials: "include",
         headers: { "Content-Type": "application/json",
           "Authorization": `Bearer ${localStorage.getItem("token")}`
          },
@@ -94,7 +91,6 @@ const ProductPage = () => {
   const sortByRating = async () => {
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/product/sort/rating`, {
-        credentials: "include",
         headers: {
           "Authorization": `Bearer ${localStorage.getItem('token')}`
         }
