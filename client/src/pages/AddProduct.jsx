@@ -47,7 +47,7 @@ const AddProduct = ({openAddProduct,setOpenAddProduct}) => {
       if(data.message=='unauthorized' || response.status==401){
         navigate('/')
       }
-      if (data.sucess) {
+      if (data.success) {
         alert("Product added successfully!");
         setOpenAddProduct(!openAddProduct);
       } else {
